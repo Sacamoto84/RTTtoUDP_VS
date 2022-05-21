@@ -1,1 +1,2 @@
-MinimalisticTelnet
+Конвертер с Jlink Telnet localhost:19021 в Broadcast 192.168.0.255 на передачу 8888 прием на 8889,V2 Есть возможность запуска Jlink и перезапуска контроллера через *.bat 
+VS2022 -> Git
