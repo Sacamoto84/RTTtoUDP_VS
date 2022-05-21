@@ -17,7 +17,7 @@ namespace MinimalisticTelnet
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("RTT UDP V2");
+            Console.WriteLine("RTT UDP V3");
             ShowWindow(GetConsoleWindow(), 0);
 
             NotifyIcon icon = new NotifyIcon();
@@ -63,8 +63,6 @@ namespace MinimalisticTelnet
             ConsoleVisible = visible;
             ShowWindow(ConsoleWindow, visible ? SHOW : HIDE);
         }
-
-
 
         static void Adder()
         {
@@ -137,11 +135,6 @@ namespace MinimalisticTelnet
             server.Close();
         }
 
-       
-
-
-
-
         static int Show = 0;
         private static void Ni_Click(object sender, EventArgs e)
         {
@@ -159,7 +152,6 @@ namespace MinimalisticTelnet
             
         }
 
-
         private static void ReciveUDP()
         {
             UdpClient client = new UdpClient();
@@ -172,13 +164,12 @@ namespace MinimalisticTelnet
                     byte[] data = client.Receive(ref localEp);
 
                     string text = Encoding.UTF8.GetString(data);
-
-                    
+                   
                     Console.WriteLine("Прием коанды:"+text);
 
                     if(text == "Reset")
                     {
-                        Process.Start("reset.bat");
+                        Process.Start("c:\\Jlink\\reset.bat");
                     }
 
                     if (text == "Activate")
@@ -188,13 +179,11 @@ namespace MinimalisticTelnet
 
                         Process pro = new Process();
 
-                        pro.StartInfo.FileName = @"activate.bat";
+                        pro.StartInfo.FileName = @"c:\Jlink\activate.bat";
                         pro.StartInfo.Arguments = "";
                         pro.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
                         pro.StartInfo.CreateNoWindow = true;
                         pro.Start();
-
-
                     }
                 }
                 catch (Exception err)
