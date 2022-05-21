@@ -4,25 +4,38 @@
 // http://www.corebvba.be
 
 using System;
-using System.Collections.Generic;
 using System.Text;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 using System.Windows.Forms;
 using System.Threading;
+using System.Diagnostics;
 
 namespace MinimalisticTelnet
 {
     class Program
     {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("RTT UDP V1");
+            ShowWindow(GetConsoleWindow(), 0);
 
+            NotifyIcon icon = new NotifyIcon();
+            icon.Icon = MinimalisticTelnet.Properties.Resources.altyo;//new System.Drawing.Icon("Resources/altyo.ico");
+            icon.Visible = true;
+            icon.Text = "Свернутое консольное приложение";
+            icon.Click += Ni_Click;
 
+            Thread t = new Thread(Adder);
+            t.Name = "Thread1";
+            t.Start();
 
+            Thread tRecive = new Thread(ReciveUDP);
+            tRecive.Name = "UDP Reciver";
+            tRecive.Start();
+
+            Application.Run();
+        }
 
         private static bool ConsoleVisible = false;
         private const int HIDE = 0;
@@ -32,7 +45,9 @@ namespace MinimalisticTelnet
 
 
         private static IntPtr ConsoleWindow = GetConsoleWindow();
-  
+
+        static Socket server;// = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
@@ -49,16 +64,16 @@ namespace MinimalisticTelnet
             ShowWindow(ConsoleWindow, visible ? SHOW : HIDE);
         }
 
-        
 
-        private static void Adder()
+
+        static void Adder()
         {
 
             UTF8Encoding utf8 = new UTF8Encoding();
 
             IPEndPoint ip = new IPEndPoint(IPAddress.Parse("192.168.0.255"), 8888);
             byte[] data = new byte[2048 * 32];
-            Socket server = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            server = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
             TelnetConnection tc = null;
             int count = 0;
@@ -67,7 +82,6 @@ namespace MinimalisticTelnet
             {
                 try
                 {
-
                     data = Encoding.UTF8.GetBytes("\u001b[01;38;05;107m*** Подключение к Telnet ***\u001b[0m");
                     server.SendTo(data, data.Length, SocketFlags.None, ip);
                     Console.WriteLine("\u001b[01;38;05;107m***Подключение к Telnet ***\u001b[0m");
@@ -91,7 +105,7 @@ namespace MinimalisticTelnet
                         //Проверяем подключение
                         if (tc.checkConnect() == false)
                         {
-                            data = Encoding.UTF8.GetBytes("\x1B[38;5;125m*** Error Telnet Server Отключет ***");
+                            data = Encoding.UTF8.GetBytes("\u001b[38;05;9m*** Error Telnet Server Отключен ***");
                             server.SendTo(data, data.Length, SocketFlags.None, ip);
                             break;
                         }
@@ -120,43 +134,12 @@ namespace MinimalisticTelnet
                 //server.SendTo(data, data.Length, SocketFlags.None, ip);
                 //Console.WriteLine("***DISCONNECTED");
             }
-
             server.Close();
-
-
-
-
         }
 
-        static void Main(string[] args)
-        {
-            Console.WriteLine("RTT UDP v1.0");
-
-            ShowWindow(GetConsoleWindow(), 0);
-
-            NotifyIcon icon = new NotifyIcon();
-            icon.Icon = new System.Drawing.Icon("altyo.ico");
-            icon.Visible = true;
-            icon.Text = "Свернутое консольное приложение";
-            icon.Click += Ni_Click;
-
-            Thread t = new Thread(Adder);
-            t.Name = "Thread1";
-            t.Start();
+       
 
 
-            Application.Run();
-
-
-
-            //
-
-           
-
-
-
-
-        }
 
 
         static int Show = 0;
@@ -175,6 +158,78 @@ namespace MinimalisticTelnet
             
             
         }
+
+
+        private static void ReciveUDP()
+        {
+            UdpClient client = new UdpClient();
+            IPEndPoint localEp = new IPEndPoint(IPAddress.Any, 8889);
+            client.Client.Bind(localEp);
+            while (true)
+            {
+                try
+                {
+                    byte[] data = client.Receive(ref localEp);
+
+                    string text = Encoding.UTF8.GetString(data);
+
+                    
+                    Console.WriteLine("Прием коанды:"+text);
+
+                    if(text == "Reset")
+                    {
+                        Process.Start("D:\\Dropbox\\Jlink\\reset.bat");
+                    }
+
+                    if (text == "Activate")
+                    {
+                        Kill_Jlink();
+                        Thread.Sleep(1000);
+
+                        //Process.Start("D:\\Dropbox\\Jlink\\activate.bat");
+
+
+                        //ProcessStartInfo pro = new ProcessStartInfo();
+
+                        //pro.FileName = @"D:\Dropbox\Jlink\activate.bat";
+                        //pro.RedirectStandardInput = true;
+                        //pro.RedirectStandardOutput = false;
+                        //pro.Arguments = "";
+                        //pro.UseShellExecute = true;
+                        //pro.CreateNoWindow = true; // <- imp. line
+
+                        Process pro = new Process();
+
+                        pro.StartInfo.FileName = @"D:\Dropbox\Jlink\activate.bat";
+                        pro.StartInfo.Arguments = "";
+                        pro.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
+                        pro.StartInfo.CreateNoWindow = true;
+                        pro.Start();
+
+
+                    }
+                }
+                catch (Exception err)
+                {
+                    Console.WriteLine(err.ToString());
+                }
+            }
+        }
+
+
+        static void Kill_Jlink()
+        {
+            System.Diagnostics.Process[] etc = System.Diagnostics.Process.GetProcesses();//получим процессы
+            foreach (System.Diagnostics.Process anti in etc)//обойдем каждый процесс
+            {
+                    if (anti.ProcessName.ToLower().Contains("Jlink".ToLower())) //найдем нужный и убьем
+                    {
+                        anti.Kill();
+                    }
+            }
+
+        }
+
 
 
     }

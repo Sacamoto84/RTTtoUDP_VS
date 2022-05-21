@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Net.Sockets;
 
 namespace MinimalisticTelnet
@@ -54,16 +53,25 @@ namespace MinimalisticTelnet
         public bool checkConnect()
         {
 
-            if (tcpSocket.Client.Poll(0, SelectMode.SelectRead))
+            //System.Net.Sockets.SocketException: "Удаленный хост принудительно разорвал существующее подключение"
+            try
             {
-                byte[] buff = new byte[1];
-                if (tcpSocket.Client.Receive(buff, SocketFlags.Peek) == 0)
+                if (tcpSocket.Client.Poll(0, SelectMode.SelectRead))
                 {
-                    // Client disconnected
-                    Console.WriteLine("Jlink Telnet отключен");
-                    tcpSocket.Close();
-                    return false;
+                    byte[] buff = new byte[1];
+                    if (tcpSocket.Client.Receive(buff, SocketFlags.Peek) == 0)
+                    {
+                        // Client disconnected
+                        Console.WriteLine("Jlink Telnet отключен");
+                        tcpSocket.Close();
+                        return false;
+                    }
                 }
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine(err.ToString());
+                return false;
             }
 
             return true;
