@@ -179,7 +179,7 @@ namespace MinimalisticTelnet
 
                         Process pro = new Process();
 
-                        pro.StartInfo.FileName = @"c:\Jlink\activate.bat";
+                        pro.StartInfo.FileName = @"c:\\Jlink\\activate.bat";
                         pro.StartInfo.Arguments = "";
                         pro.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
                         pro.StartInfo.CreateNoWindow = true;

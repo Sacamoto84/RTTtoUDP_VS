@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MinimalisticTelnet</RootNamespace>
-    <AssemblyName>RTT_UDP_V2</AssemblyName>
+    <AssemblyName>RTT_UDP_V3</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
