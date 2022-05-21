@@ -17,7 +17,7 @@ namespace MinimalisticTelnet
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("RTT UDP V1");
+            Console.WriteLine("RTT UDP V2");
             ShowWindow(GetConsoleWindow(), 0);
 
             NotifyIcon icon = new NotifyIcon();
@@ -178,7 +178,7 @@ namespace MinimalisticTelnet
 
                     if(text == "Reset")
                     {
-                        Process.Start("D:\\Dropbox\\Jlink\\reset.bat");
+                        Process.Start("reset.bat");
                     }
 
                     if (text == "Activate")
@@ -186,21 +186,9 @@ namespace MinimalisticTelnet
                         Kill_Jlink();
                         Thread.Sleep(1000);
 
-                        //Process.Start("D:\\Dropbox\\Jlink\\activate.bat");
-
-
-                        //ProcessStartInfo pro = new ProcessStartInfo();
-
-                        //pro.FileName = @"D:\Dropbox\Jlink\activate.bat";
-                        //pro.RedirectStandardInput = true;
-                        //pro.RedirectStandardOutput = false;
-                        //pro.Arguments = "";
-                        //pro.UseShellExecute = true;
-                        //pro.CreateNoWindow = true; // <- imp. line
-
                         Process pro = new Process();
 
-                        pro.StartInfo.FileName = @"D:\Dropbox\Jlink\activate.bat";
+                        pro.StartInfo.FileName = @"activate.bat";
                         pro.StartInfo.Arguments = "";
                         pro.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
                         pro.StartInfo.CreateNoWindow = true;
