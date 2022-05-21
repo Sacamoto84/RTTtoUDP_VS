@@ -43,11 +43,8 @@ namespace MinimalisticTelnet
         private const int MF_BYCOMMAND = 0;
         private const int SC_CLOSE = 0xF060;
 
-
         private static IntPtr ConsoleWindow = GetConsoleWindow();
-
         static Socket server;// = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
@@ -68,7 +65,6 @@ namespace MinimalisticTelnet
         {
 
             UTF8Encoding utf8 = new UTF8Encoding();
-
             IPEndPoint ip = new IPEndPoint(IPAddress.Parse("192.168.0.255"), 8888);
             byte[] data = new byte[2048 * 32];
             server = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -107,11 +103,7 @@ namespace MinimalisticTelnet
                             server.SendTo(data, data.Length, SocketFlags.None, ip);
                             break;
                         }
-
                         byte[] buf = tc.Read();
-
-                        //Console.Write("\x1B[38;5;125mfffff");
-
                         if (buf != null)
                         {
                             if (buf.Length > 0)
@@ -122,15 +114,8 @@ namespace MinimalisticTelnet
                                 server.SendTo(buf, buf.Length, SocketFlags.None, ip);
                             }
                         }
-
-
-
                     }
                 }
-
-                //data = Encoding.UTF8.GetBytes("***DISCONNECTED");
-                //server.SendTo(data, data.Length, SocketFlags.None, ip);
-                //Console.WriteLine("***DISCONNECTED");
             }
             server.Close();
         }
@@ -148,8 +133,6 @@ namespace MinimalisticTelnet
                 Show = 0;
                 ShowWindow(GetConsoleWindow(), 0);
             }
-            
-            
         }
 
         private static void ReciveUDP()
@@ -162,23 +145,19 @@ namespace MinimalisticTelnet
                 try
                 {
                     byte[] data = client.Receive(ref localEp);
-
                     string text = Encoding.UTF8.GetString(data);
-                   
+             
                     Console.WriteLine("Прием коанды:"+text);
 
                     if(text == "Reset")
                     {
                         Process.Start("c:\\Jlink\\reset.bat");
                     }
-
                     if (text == "Activate")
                     {
                         Kill_Jlink();
                         Thread.Sleep(1000);
-
                         Process pro = new Process();
-
                         pro.StartInfo.FileName = @"c:\\Jlink\\activate.bat";
                         pro.StartInfo.Arguments = "";
                         pro.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
@@ -192,7 +171,6 @@ namespace MinimalisticTelnet
                 }
             }
         }
-
 
         static void Kill_Jlink()
         {
