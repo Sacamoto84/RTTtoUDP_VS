@@ -5,7 +5,7 @@
 	SEGGER_RTT_WriteString(0, "033[01;03;38;05;226;48;05;24m");
 	SEGGER_RTT_WriteString(0, "Start\x1B[0m\r\n");
     
-!Важно Окончание строки \r\n, это требуют все терминалы
+!Важно Окончание строки \r\n, это требуют все терминалы  
 !Чтобы работали скрипты, нужно в PATH windows добавить папку где лежит jlink.exe
 например C:\Program Files\SEGGER\JLink
 
