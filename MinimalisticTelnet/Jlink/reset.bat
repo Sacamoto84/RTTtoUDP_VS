@@ -1,1 +1,1 @@
-JLink.exe -Device STM32F407VG -AutoConnect 1 -If SWD -Speed 1000 -CommanderScript D:\Dropbox\Jlink\reset.jlink
+JLink.exe -Device STM32F407VG -AutoConnect 1 -If SWD -Speed 1000 -CommanderScript reset.jlink

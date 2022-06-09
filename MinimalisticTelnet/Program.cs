@@ -17,7 +17,7 @@ namespace MinimalisticTelnet
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("RTT UDP V3");
+            Console.WriteLine("RTT UDP V3.2");
             ShowWindow(GetConsoleWindow(), 0);
 
             NotifyIcon icon = new NotifyIcon();
