@@ -17,7 +17,7 @@ namespace MinimalisticTelnet
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("RTT UDP V3.2");
+            Console.WriteLine("RTT UDP V3.6");
             ShowWindow(GetConsoleWindow(), 0);
 
             NotifyIcon icon = new NotifyIcon();
@@ -63,11 +63,12 @@ namespace MinimalisticTelnet
 
         static void Adder()
         {
-
             UTF8Encoding utf8 = new UTF8Encoding();
             IPEndPoint ip = new IPEndPoint(IPAddress.Parse("192.168.0.255"), 8888);
-            byte[] data = new byte[2048 * 32];
+            byte[] data = new byte[2048 * 1024];
             server = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+           
+            server.SendTimeout = 1;
 
             TelnetConnection tc = null;
             int count = 0;
@@ -103,16 +104,14 @@ namespace MinimalisticTelnet
                             server.SendTo(data, data.Length, SocketFlags.None, ip);
                             break;
                         }
+
                         byte[] buf = tc.Read();
-                        if (buf != null)
+                        if ((buf != null)&&(buf.Length > 0))
                         {
-                            if (buf.Length > 0)
-                            {
-                                count++;
-                                String decodedString = utf8.GetString(buf);
-                                Console.Write($"{count} : {decodedString}");
-                                server.SendTo(buf, buf.Length, SocketFlags.None, ip);
-                            }
+                            count++;
+                            String decodedString = utf8.GetString(buf);
+                            Console.Write($"{count} : {decodedString}");
+                            server.SendTo(buf, buf.Length, SocketFlags.None, ip);
                         }
                     }
                 }
